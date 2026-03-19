@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  osrm:
+    image: ghcr.io/project-osrm/osrm-backend:latest
+    container_name: osrm_central_fd
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data/osrm:/data
+    command: >
+      osrm-routed --algorithm mld
+      --max-table-size 5000
+      /data/central-fed-district-260318.osrm
+    restart: unless-stopped
