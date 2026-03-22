@@ -18,11 +18,11 @@ class DbConfig(BaseModel):
     max_overflow: int = 10
 
     naming_convention: ClassVar[dict[str, str]] = {
-        "ix": "ix__%(table_name)s__%(all_column_names)s",
-        "uq": "uq__%(table_name)s__%(all_column_names)s",
+        "ix": "ix__%(table_name)s__%(column_0_name)s",
+        "uq": "uq__%(table_name)s__%(column_0_name)s",
         "ck": "ck__%(table_name)s__%(constraint_name)s",
-        "fk": "fk__%(table_name)s__%(all_column_names)s__%(referred_table_name)s",
-        "pk": "pk__%(table_name)s"
+        "fk": "fk__%(table_name)s__%(column_0_name)s__%(referred_table_name)s",
+        "pk": "pk__%(table_name)s",
     }
 
 
@@ -31,7 +31,7 @@ class ApiPrefix(BaseModel):
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=("app/env/.env", "app/env/.env.template"),
+        env_file=("app/env/.env.template", "app/env/.env"),
         env_ignore_empty=True,
         case_sensitive=False,
         env_nested_delimiter="__",
