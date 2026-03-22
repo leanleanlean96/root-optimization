@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 from core.config import config
 
-from core.dbclient import db_client
+from data.dbclient import db_client
 
 
 @asynccontextmanager
