@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from typing import ClassVar
+
 
 class AppConfig(BaseModel):
     name: str = "RootOptimization"
@@ -14,6 +16,14 @@ class DbConfig(BaseModel):
     echo_pool: bool = False
     pool_size: int = 25
     max_overflow: int = 10
+
+    naming_convention: ClassVar[dict[str, str]] = {
+        "ix": "ix__%(table_name)s__%(all_column_names)s",
+        "uq": "uq__%(table_name)s__%(all_column_names)s",
+        "ck": "ck__%(table_name)s__%(constraint_name)s",
+        "fk": "fk__%(table_name)s__%(all_column_names)s__%(referred_table_name)s",
+        "pk": "pk__%(table_name)s"
+    }
 
 
 class ApiPrefix(BaseModel):
