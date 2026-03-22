@@ -16,7 +16,6 @@ class User(Base):
     routes: Mapped[list["Route"]] = relationship(
         "Route",
         back_populates="user",
-        cascade="all, delete-orphan",
     )
 
 class Route(Base):
@@ -32,7 +31,7 @@ class Route(Base):
 
     user_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("users.id"),
         nullable=False,
     )
     user: Mapped["User"] = relationship(
