@@ -10,6 +10,7 @@ class AppConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8080
 
+
 class DbConfig(BaseModel):
     url: PostgresDsn
     echo: bool = False
@@ -29,6 +30,7 @@ class DbConfig(BaseModel):
 class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
+
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=("app/env/.env.template", "app/env/.env"),
@@ -41,5 +43,6 @@ class Config(BaseSettings):
     prefix: ApiPrefix = ApiPrefix()
     db: DbConfig
     debug: bool = False
+
 
 config = Config()

@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 from .base import Base
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -17,6 +18,7 @@ class User(Base):
         "Route",
         back_populates="user",
     )
+
 
 class Route(Base):
     __tablename__ = "routes"
@@ -38,4 +40,3 @@ class Route(Base):
         "User",
         back_populates="routes",
     )
-    

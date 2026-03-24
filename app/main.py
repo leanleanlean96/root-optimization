@@ -11,10 +11,11 @@ from data.dbclient import db_client
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    #startup
+    # startup
     yield
-    #shutdown
+    # shutdown
     await db_client.dispose()
+
 
 main_app = FastAPI(
     title=config.app.name,
