@@ -8,6 +8,9 @@ from core.config import config
 
 from data.dbclient import db_client
 
+from api.routes.users import router
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,6 +24,8 @@ main_app = FastAPI(
     title=config.app.name,
     lifespan=lifespan,
 )
+
+main_app.include_router(router)
 
 if __name__ == "__main__":
     uvicorn.run(
