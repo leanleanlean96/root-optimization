@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pydantic import BaseModel
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -9,6 +10,14 @@ class AppConfig(BaseModel):
     name: str = "RootOptimization"
     host: str = "0.0.0.0"
     port: int = 8080
+
+
+class JwtConfig(BaseModel):
+    secret_key: str
+    public_key: str
+    access_key_delta: timedelta = timedelta(minutes=15)
+    refresh_key_delta: timedelta = timedelta(days=2)
+    algorithm: str
 
 
 class DbConfig(BaseModel):
@@ -33,7 +42,7 @@ class ApiPrefix(BaseModel):
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=("app/env/.env.template", "app/env/.env"),
+        env_file=("app/env/.env.template", "app/env/.env", "app/env/jwt.env"),
         env_ignore_empty=True,
         case_sensitive=False,
         env_nested_delimiter="__",
@@ -42,6 +51,7 @@ class Config(BaseSettings):
     app: AppConfig = AppConfig()
     prefix: ApiPrefix = ApiPrefix()
     db: DbConfig
+    jwt: JwtConfig
     debug: bool = False
 
 
