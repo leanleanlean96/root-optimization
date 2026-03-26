@@ -1,7 +1,7 @@
 from sqlalchemy import String, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.postgresql import JSONB
+from geoalchemy2 import Geometry
 
 from .base import Base
 
@@ -26,8 +26,8 @@ class Route(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     distance_m: Mapped[float] = mapped_column(nullable=False)
     duration_s: Mapped[float] = mapped_column(nullable=False)
-    geometry: Mapped[dict] = mapped_column(
-        MutableDict.as_mutable(JSONB),
+    geometry: Mapped[str] = mapped_column(
+        Geometry(geometry_type="LINESTRING", srid=4326),
         nullable=False,
     )
 

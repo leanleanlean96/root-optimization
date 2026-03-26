@@ -42,7 +42,7 @@ class ApiPrefix(BaseModel):
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=("app/env/.env.template", "app/env/.env", "app/env/jwt.env"),
+        env_file=(".env"),
         env_ignore_empty=True,
         case_sensitive=False,
         env_nested_delimiter="__",
