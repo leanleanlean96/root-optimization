@@ -1,6 +1,22 @@
-version: '3.8'
-
 services:
+  db:
+    image: postgis/postgis:15-3.4
+    container_name: delivery_db
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app-network
+
   osrm:
     image: ghcr.io/project-osrm/osrm-backend:latest
     container_name: osrm_central_fd
@@ -13,3 +29,41 @@ services:
       --max-table-size 5000
       /data/central-fed-district-260318.osrm
     restart: unless-stopped
+    networks:
+      - app-network
+
+  backend:
+    build: .
+    container_name: delivery_backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      APP_CONFIG__DB__URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      OSRM_URL: ${OSRM_URL}
+      DEBUG: ${DEBUG}
+    volumes:
+      - ./app:/app
+      - ./alembic.ini:/alembic.ini
+    depends_on:
+      db:
+        condition: service_healthy
+      osrm:
+        condition: service_started
+    command: >
+      sh -c "
+        alembic -c /alembic.ini upgrade head &&
+        cd /app &&
+        uvicorn main:app --reload
+      "
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
