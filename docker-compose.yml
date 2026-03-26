@@ -4,16 +4,14 @@ services:
   db:
     image: postgis/postgis:15-3.4
     container_name: delivery_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: delivery_db
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -41,12 +39,15 @@ services:
     container_name: delivery_backend
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
-      APP_CONFIG__DB__URL: postgresql+asyncpg://postgres:postgres@db:5432/delivery_db
-      OSRM_URL: http://osrm:5000
-      DEBUG: "true"
+      APP_CONFIG__DB__URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      OSRM_URL: ${OSRM_URL}
+      DEBUG: ${DEBUG}
     volumes:
       - ./app:/app
+    depends_on:
       db:
         condition: service_healthy
       osrm:
