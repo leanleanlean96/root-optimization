@@ -30,6 +30,7 @@ class Route(Base):
         Geometry(geometry_type="LINESTRING", srid=4326),
         nullable=False,
     )
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     user_id: Mapped[int] = mapped_column(
         Integer,

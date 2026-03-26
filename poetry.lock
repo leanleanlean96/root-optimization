@@ -495,21 +495,6 @@ files = [
 ]
 
 [[package]]
-name = "osrm-py"
-version = "0.5"
-description = "Python client for OSRM API"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "osrm-py-0.5.tar.gz", hash = "sha256:8ae0fe4c943849e1b8ef0f99e768ffcd18787b4f2dced9fd0642998fad3f5ac6"},
-]
-
-[package.extras]
-aiohttp = ["aiohttp (>=1.2.0,<=2.1.0)"]
-requests = ["requests (>=2.14.0)"]
-
-[[package]]
 name = "packaging"
 version = "26.0"
 description = "Core utilities for Python packages"
@@ -931,4 +916,4 @@ standard = ["colorama (>=0.4) ; sys_platform == \"win32\"", "httptools (>=0.6.3)
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "435a03fb2226885e890a3116252a76385bf0ad0cda5632c2b32fe7a749f1a43a"
+content-hash = "0469ef8894f5dd5f06f403ab14ec024d2c364090f53622ee100a117a98773768"
