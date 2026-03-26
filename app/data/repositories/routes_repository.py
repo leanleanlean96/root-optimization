@@ -5,7 +5,7 @@ from domain.models.route import RouteData, RouteMetrics
 
 from ..schemas import Route
 
-class PostgresRouteRepository:
+class RouteRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 

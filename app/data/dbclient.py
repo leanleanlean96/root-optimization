@@ -39,7 +39,7 @@ class DbClient:
         async with self.session_factory() as session:
             yield session
 
-
+#TODO: move to lifespan
 db_client = DbClient(
     url=str(config.db.url),
     echo=config.db.echo,
