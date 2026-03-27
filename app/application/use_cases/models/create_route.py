@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True, slots=True)
 class CreateRouteInput:
     user_id: int
     coords: list[tuple[float, float]]
     profile: str = "driving"
+
 
 @dataclass(frozen=True, slots=True)
 class CreateRouteOutput:

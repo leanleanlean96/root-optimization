@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True, slots=True)
 class GetRouteInput:
     route_id: int
+
 
 @dataclass(frozen=True, slots=True)
 class GetRouteOutput:

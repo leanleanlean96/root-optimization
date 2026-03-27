@@ -39,8 +39,10 @@ class DbConfig(BaseModel):
 class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
+
 class OsrmConfig(BaseModel):
     url: str
+
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(

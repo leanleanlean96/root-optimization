@@ -3,6 +3,7 @@ from typing import Any
 
 GeoJson = dict[str, Any]
 
+
 @dataclass(frozen=True, slots=True)
 class RouteMetrics:
     distance: float

@@ -3,6 +3,7 @@ from app.data.repositories.routes_repository import RouteRepository
 from app.domain.models.route import RouteData, RouteMetrics
 from .models.create_route import CreateRouteInput, CreateRouteOutput
 
+
 class CreateRouteUseCase:
     def __init__(self, osrm_client: OsrmClient, route_repo: RouteRepository):
         self.osrm_client = osrm_client
