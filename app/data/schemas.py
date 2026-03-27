@@ -12,7 +12,8 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(30), nullable=False)
     email: Mapped[str] = mapped_column(String(225), nullable=False, unique=True)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=True)
 
     routes: Mapped[list["Route"]] = relationship(
         "Route",
