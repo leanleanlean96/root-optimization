@@ -1,5 +1,5 @@
-from data.repositories.routes_repository import RouteRepository
-from domain.models.route import RouteData
+from app.data.repositories.routes_repository import RouteRepository
+from app.domain.models.route import RouteData
 
 from .models.delete_user import DeleteRouteInput
 

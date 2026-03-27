@@ -1,7 +1,12 @@
+import json
+from shapely import to_geojson
+from shapely.geometry import shape
+from geoalchemy2.shape import from_shape, to_shape
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from domain.models.route import RouteData, RouteMetrics
+from app.domain.models.route import RouteData, RouteMetrics
 
 from ..schemas import Route
 
@@ -14,28 +19,22 @@ class RouteRepository:
             user_id=user_id,
             distance_m=route_metrics.distance,
             duration_s=route_metrics.duration,
-            geometry=route_metrics.geometry
+            geometry=from_shape(shape(route_metrics.geometry), srid=4326)
         )
         self.session.add(db_route)
         await self.session.commit()
         await self.session.refresh(db_route)
-        
-        route_metrics = RouteMetrics(
-            distance=db_route.distance_m,
-            duration=db_route.duration_s,
-            geometry=db_route.geometry,
-        )
 
         return RouteData(
             id=db_route.id,
             user_id=db_route.user_id,
-            metrics=route_metrics,
+            metrics=route_metrics
         )
     
     async def get_route_by_id(self, route_id: int) -> RouteData | None:
         query_result = await self.session.execute(
             select(Route).where(Route.id == route_id,
-                                Route.is_deleted == False)
+                                Route.is_deleted.is_(False))
         )
 
         db_route = query_result.scalar_one_or_none()
@@ -43,10 +42,12 @@ class RouteRepository:
         if db_route is None:
             return None
         
+        geometry_geojson = json.loads(to_geojson(to_shape(db_route.geometry)))
+
         route_metrics = RouteMetrics(
             distance=db_route.distance_m,
             duration=db_route.duration_s,
-            geometry=db_route.geometry,
+            geometry=geometry_geojson,
         )
 
         return RouteData(
@@ -66,10 +67,11 @@ class RouteRepository:
         routes: list[RouteData] = []
 
         for db_route in user_routes:
+            geometry_geojson = json.loads(to_geojson(to_shape(db_route.geometry)))
             route_metrics = RouteMetrics(
                 distance=db_route.distance_m,
                 duration=db_route.duration_s,
-                geometry=db_route.geometry,
+                geometry=geometry_geojson,
             )
 
             routes.append(RouteData(
@@ -81,8 +83,13 @@ class RouteRepository:
         return routes
     
     async def delete_by_id(self, route_id: int) -> None:
-        route = await self.get_route_by_id(route_id=route_id)
+        query_result = await self.session.execute(
+            select(Route).where(Route.id == route_id)
+        )
+        db_route = query_result.scalar_one_or_none()
 
-        if route:
-            route.is_deleted = True
-            await self.session.commit()
+        if db_route is None:
+            return
+
+        db_route.is_deleted = True
+        await self.session.commit()

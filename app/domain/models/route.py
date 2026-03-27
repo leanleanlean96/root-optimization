@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 from typing import Any
 
+GeoJson = dict[str, Any]
+
 @dataclass(frozen=True, slots=True)
 class RouteMetrics:
     distance: float
     duration: float
-    geometry: Any
+    geometry: GeoJson
 
 
 @dataclass(frozen=True, slots=True)

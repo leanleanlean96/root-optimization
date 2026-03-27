@@ -1,7 +1,7 @@
 import httpx
 from typing import Tuple
 
-from domain.models.route import RouteMetrics
+from app.domain.models.route import RouteMetrics
 
 
 class OsrmClient:

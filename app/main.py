@@ -4,9 +4,11 @@ import uvicorn
 
 from fastapi import FastAPI
 
-from core.config import config
+from app.api.routes.routes import router as routes_router
 
-from data.dbclient import db_client
+from app.core.config import config
+
+from app.data.dbclient import db_client
 
 
 @asynccontextmanager
@@ -21,6 +23,8 @@ main_app = FastAPI(
     title=config.app.name,
     lifespan=lifespan,
 )
+
+main_app.include_router(routes_router)
 
 if __name__ == "__main__":
     uvicorn.run(

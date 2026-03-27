@@ -1,6 +1,6 @@
-from infrastructure.osrm_client import OsrmClient
-from data.repositories.routes_repository import RouteRepository
-from domain.models.route import RouteData, RouteMetrics
+from app.infrastructure.osrm_client import OsrmClient
+from app.data.repositories.routes_repository import RouteRepository
+from app.domain.models.route import RouteData, RouteMetrics
 from .models.create_route import CreateRouteInput, CreateRouteOutput
 
 class CreateRouteUseCase:

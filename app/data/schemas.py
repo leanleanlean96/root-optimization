@@ -1,7 +1,6 @@
 from sqlalchemy import String, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.ext.mutable import MutableDict
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geometry, WKBElement
 
 from .base import Base
 
@@ -12,7 +11,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(30), nullable=False)
     email: Mapped[str] = mapped_column(String(225), nullable=False, unique=True)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     routes: Mapped[list["Route"]] = relationship(
         "Route",
@@ -26,7 +25,7 @@ class Route(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     distance_m: Mapped[float] = mapped_column(nullable=False)
     duration_s: Mapped[float] = mapped_column(nullable=False)
-    geometry: Mapped[str] = mapped_column(
+    geometry = mapped_column(
         Geometry(geometry_type="LINESTRING", srid=4326),
         nullable=False,
     )

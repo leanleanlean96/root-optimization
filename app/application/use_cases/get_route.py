@@ -1,14 +1,14 @@
-from data.repositories.routes_repository import RouteRepository
-from domain.models.route import RouteData
+from app.data.repositories.routes_repository import RouteRepository
+from app.domain.models.route import RouteData
 
 from .models.get_route import GetRouteInput, GetRouteOutput
 
-class GetRouteById:
+class GetRouteByIdUseCase:
     def __init__(self, route_repo: RouteRepository):
         self.route_repo = route_repo
 
     async def execute(self, input: GetRouteInput) -> GetRouteOutput:
-        route: RouteData | None = await self.route_repo.get_route_by_id(GetRouteInput.route_id)
+        route: RouteData | None = await self.route_repo.get_route_by_id(input.route_id)
         if route is None:
             #TODO: Write custom exceptions
             raise ValueError("Route not found")
@@ -22,3 +22,5 @@ class GetRouteById:
         )
         
         return output
+    
+#TODO: get all routes for user

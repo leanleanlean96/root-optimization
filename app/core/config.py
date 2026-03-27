@@ -39,6 +39,8 @@ class DbConfig(BaseModel):
 class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
+class OsrmConfig(BaseModel):
+    url: str
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
@@ -52,6 +54,7 @@ class Config(BaseSettings):
     prefix: ApiPrefix = ApiPrefix()
     db: DbConfig
     jwt: JwtConfig
+    osrm: OsrmConfig
     debug: bool = False
 
 
