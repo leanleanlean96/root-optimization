@@ -1,11 +1,11 @@
-from app.infrastructure.osrm_client import OsrmClient
-from app.data.repositories.routes_repository import RouteRepository
+from app.domain.services.osrm_service import OsrmService
+from app.domain.repositories.route_repo import RouteRepository
 from app.domain.models.route import RouteData, RouteMetrics
 from .models.create_route import CreateRouteInput, CreateRouteOutput
 
 
 class CreateRouteUseCase:
-    def __init__(self, osrm_client: OsrmClient, route_repo: RouteRepository):
+    def __init__(self, osrm_client: OsrmService, route_repo: RouteRepository):
         self.osrm_client = osrm_client
         self.route_repo = route_repo
 

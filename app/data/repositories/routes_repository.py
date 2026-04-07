@@ -34,7 +34,7 @@ class RouteRepository:
 
     async def get_route_by_id(self, route_id: int) -> RouteData | None:
         query_result = await self.session.execute(
-            select(Route).where(Route.id == route_id, Route.is_deleted.is_(False))
+            select(Route).where(Route.id == route_id, Route.is_deleted == False)
         )
 
         db_route = query_result.scalar_one_or_none()

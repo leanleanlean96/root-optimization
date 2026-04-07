@@ -1,4 +1,5 @@
-from app.data.repositories.routes_repository import RouteRepository
+from app.domain.exceptions import RouteNotFoundException
+from app.domain.repositories.route_repo import RouteRepository
 from app.domain.models.route import RouteData
 
 from .models.get_route import GetRouteInput, GetRouteOutput
@@ -11,8 +12,7 @@ class GetRouteByIdUseCase:
     async def execute(self, input: GetRouteInput) -> GetRouteOutput:
         route: RouteData | None = await self.route_repo.get_route_by_id(input.route_id)
         if route is None:
-            # TODO: Write custom exceptions
-            raise ValueError("Route not found")
+            raise RouteNotFoundException(f"Route with id {input.route_id} not found")
 
         output: GetRouteOutput = GetRouteOutput(
             route_id=route.id,

@@ -1,6 +1,7 @@
 import httpx
 from typing import Tuple
 
+from app.domain.exceptions import OsrmServiceException, OsrmServiceUnavailableException
 from app.domain.models.route import RouteMetrics
 
 
@@ -15,12 +16,17 @@ class OsrmClient:
         coords = ";".join(f"{lon},{lat}" for lon, lat in dots)
         url = f"{self.service_url}/route/v1/{profile}/{coords}?geometries=geojson&overview=full"
 
-        resp = await self.client.get(url, timeout=30.0)
-        resp.raise_for_status()
+        try:
+            resp = await self.client.get(url, timeout=30.0)
+            resp.raise_for_status()
+        except httpx.TimeoutException:
+            raise OsrmServiceUnavailableException("OSRM service timed out")
+        except httpx.ConnectError:
+            raise OsrmServiceUnavailableException("OSRM service is unavailable")
 
         data = resp.json()
         if data.get("code") != "Ok":
-            raise ValueError(f"OSRM error: {data.get('message', 'Unknown')}")
+            raise OsrmServiceException(f"OSRM error: {data.get('message', 'Unknown')}")
 
         route = data["routes"][0]
         return RouteMetrics(

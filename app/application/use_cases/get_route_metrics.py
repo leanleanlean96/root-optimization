@@ -1,11 +1,11 @@
 from app.domain.models.route import RouteMetrics
-from app.infrastructure.osrm_client import OsrmClient
+from app.domain.services.osrm_service import OsrmService
 
 from .models.get_route_metrics import GetRouteMetricsInput, GetRouteMetricsOutput
 
 
 class GetRouteMetricsUseCase:
-    def __init__(self, osrm_client: OsrmClient):
+    def __init__(self, osrm_client: OsrmService):
         self.osrm_client = osrm_client
 
     async def execute(self, input: GetRouteMetricsInput) -> GetRouteMetricsOutput:

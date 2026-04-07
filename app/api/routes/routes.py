@@ -46,12 +46,11 @@ async def create_route(
         duration=result.duration,
         geometry=result.geometry,
     )
-    # TODO: add status codes
     return response
 
 
-@router.get("/{route_id}", response_model=GetRouteResponse, status_code=201)
-async def create_route(
+@router.get("/{route_id}", response_model=GetRouteResponse, status_code=200)
+async def get_route_by_id(
     route_id: int = Path(gt=0),
     usecase: GetRouteByIdUseCase = Depends(get_route_by_id_usecase),
 ):
@@ -69,8 +68,8 @@ async def create_route(
     return response
 
 
-@router.post("/metrics", response_model=GetRouteMetricsResponse, status_code=201)
-async def create_route(
+@router.post("/metrics", response_model=GetRouteMetricsResponse, status_code=200)
+async def get_route_metrics(
     body: GetRouteMetricsRequest,
     usecase: GetRouteMetricsUseCase = Depends(get_route_metrics_usecase),
 ):
@@ -85,5 +84,4 @@ async def create_route(
         distance=result.distance, duration=result.duration, geometry=result.geometry
     )
 
-    # TODO: add status codes
     return response
