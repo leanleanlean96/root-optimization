@@ -40,9 +40,13 @@ class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
 
+class OsrmConfig(BaseModel):
+    url: str
+
+
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=("app/env/.env.template", "app/env/.env", "app/env/jwt.env"),
+        env_file=(".env"),
         env_ignore_empty=True,
         case_sensitive=False,
         env_nested_delimiter="__",
@@ -52,6 +56,7 @@ class Config(BaseSettings):
     prefix: ApiPrefix = ApiPrefix()
     db: DbConfig
     jwt: JwtConfig
+    osrm: OsrmConfig
     debug: bool = False
 
 

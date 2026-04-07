@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from typing import AsyncGenerator
 
-from core.config import config
+from app.core.config import config
 
 
 class DbClient:
@@ -40,6 +40,7 @@ class DbClient:
             yield session
 
 
+# TODO: move to lifespan
 db_client = DbClient(
     url=str(config.db.url),
     echo=config.db.echo,
