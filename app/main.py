@@ -13,7 +13,9 @@ from app.core.config import config
 
 from app.data.dbclient import db_client
 
-from domain.exceptions import RouteNotFoundException, OsrmServiceException, OsrmServiceUnavailableException
+from app.application.exceptions import RouteNotFoundException
+from app.infrastructure.exceptions import OsrmServiceException, OsrmServiceUnavailableException
+from app.core.exceptions import UnauthorizedException
 
 
 @asynccontextmanager
@@ -49,6 +51,10 @@ async def unicorn_exception_handler(request: Request, exc: OsrmServiceException)
         status_code=500,
         content={"message": f"Something Unusual Happened"},
     )
+
+@main_app.exception_handler(UnauthorizedException)
+async def unauthorized_handler(request: Request, exc: UnauthorizedException):
+    return JSONResponse(status_code=401, content={"Unauthorized"})
 
 main_app.include_router(routes_router, prefix=config.prefix.prefix)
 
