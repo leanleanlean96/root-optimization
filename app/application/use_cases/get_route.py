@@ -1,9 +1,8 @@
-from app.domain.exceptions import RouteNotFoundException
 from app.domain.repositories.route_repo import RouteRepository
 from app.domain.models.route import RouteData
 
 from .models.get_route import GetRouteInput, GetRouteOutput
-
+from ..exceptions import RouteNotFoundException
 
 class GetRouteByIdUseCase:
     def __init__(self, route_repo: RouteRepository):

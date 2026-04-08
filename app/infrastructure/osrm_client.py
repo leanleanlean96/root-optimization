@@ -1,9 +1,8 @@
 import httpx
 from typing import Tuple
 
-from app.domain.exceptions import OsrmServiceException, OsrmServiceUnavailableException
 from app.domain.models.route import RouteMetrics
-
+from app.infrastructure.exceptions import OsrmServiceException, OsrmServiceUnavailableException
 
 class OsrmClient:
     def __init__(self, service_url: str, client: httpx.AsyncClient):
