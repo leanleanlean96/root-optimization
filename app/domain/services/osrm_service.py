@@ -7,3 +7,8 @@ class OsrmService(Protocol):
         self, dots: list[Tuple[float, float]], profile: str
     ) -> RouteMetrics:
         ...
+    
+    async def optimize_route(
+            self, dots: list[Tuple[float, float]], profile: str
+    ) -> RouteMetrics:
+        ...

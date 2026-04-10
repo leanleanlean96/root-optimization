@@ -9,6 +9,7 @@ from app.core.dependencies import (
     get_create_route_usecase,
     get_route_by_id_usecase,
     get_route_metrics_usecase,
+    get_optimize_route_usecase
 )
 from app.application.use_cases.create_route import CreateRouteUseCase
 from app.application.use_cases.get_route import GetRouteByIdUseCase
@@ -46,6 +47,7 @@ async def create_route(
         duration=result.duration,
         geometry=result.geometry,
     )
+    
     return response
 
 
@@ -64,7 +66,6 @@ async def get_route_by_id(
         geometry=result.geometry,
     )
 
-    # TODO: add status codes
     return response
 
 
@@ -80,6 +81,23 @@ async def get_route_metrics(
         )
     )
 
+    response: GetRouteMetricsResponse = GetRouteMetricsResponse(
+        distance=result.distance, duration=result.duration, geometry=result.geometry
+    )
+
+    return response
+
+@router.post("/optimize", response_model=GetRouteMetricsResponse, status_code=200)
+async def optimize_route(
+    body: GetRouteMetricsRequest,
+    usecase: GetRouteMetricsUseCase = Depends(get_optimize_route_usecase),
+):
+    result: GetRouteMetricsOutput = await usecase.execute(
+        GetRouteMetricsInput(
+            coords=body.dots,
+            profile=body.profile,
+        )
+    )
     response: GetRouteMetricsResponse = GetRouteMetricsResponse(
         distance=result.distance, duration=result.duration, geometry=result.geometry
     )

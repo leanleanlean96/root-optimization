@@ -12,6 +12,7 @@ from app.core.exceptions import TokenExpiredException, InvalidTokenException, In
 from app.data.repositories.routes_repository import RouteRepository
 from app.infrastructure.osrm_client import OsrmClient
 from app.application.use_cases.create_route import CreateRouteUseCase
+from app.application.use_cases.optimize_route import OptimizeRouteUseCase
 from app.application.use_cases.get_route import GetRouteByIdUseCase
 from app.application.use_cases.get_route_metrics import GetRouteMetricsUseCase
 from app.application.use_cases.delete_route import DeleteRouteUseCase
@@ -78,3 +79,8 @@ def get_delete_route_usecase(
     route_repo: RouteRepository = Depends(get_route_repo),
 ) -> DeleteRouteUseCase:
     return DeleteRouteUseCase(route_repo=route_repo)
+
+def get_optimize_route_usecase(
+    osrm_client: OsrmClient = Depends(get_osrm_client)
+) -> OptimizeRouteUseCase:
+    return OptimizeRouteUseCase(osrm_client=osrm_client)
