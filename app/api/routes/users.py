@@ -2,18 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from data.dbclient import db_client
 from api.shemas import UserCreate, UserResponse, UserUpdate
 from core.domain.services.user_service import UserRegistrationService, UserApiService
 from data.repositories.sqlalchemy_user_repository import SQLAlchemyUserRepository
+from api.dependencies import get_current_active_user, get_session
+from core.domain.models.user import User
 
 router = APIRouter(prefix="/users", tags=["users"])
-
-
-async def get_session():
-    async for session in db_client.session_getter():
-        yield session
-
 
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(user_create: UserCreate, session: AsyncSession = Depends(get_session)):
@@ -37,7 +32,17 @@ async def create_user(user_create: UserCreate, session: AsyncSession = Depends(g
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-async def get_user(user_id: int, session: AsyncSession = Depends(get_session)):
+async def get_user(
+    user_id: int, 
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_active_user)
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions"
+        )
+    
     repository = SQLAlchemyUserRepository(session)
     service = UserApiService(repository)
     user = await service.get_user_by_id(user_id)
@@ -60,8 +65,15 @@ async def get_user(user_id: int, session: AsyncSession = Depends(get_session)):
 async def update_user(
     user_id: int,
     user_data: UserUpdate,
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_active_user)
 ):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions"
+        )
+    
     repository = SQLAlchemyUserRepository(session)
     service = UserApiService(repository)
     
@@ -81,7 +93,6 @@ async def update_user(
     
     user = await service.update_user(user_id, user_data)
 
-
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -97,7 +108,17 @@ async def update_user(
 
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(user_id: int, session: AsyncSession = Depends(get_session)):
+async def delete_user(
+    user_id: int, 
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_active_user)
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions"
+        )
+    
     repository = SQLAlchemyUserRepository(session)
     service = UserApiService(repository)
     

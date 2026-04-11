@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from core.domain.models.user import Email, User
+
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -21,3 +21,22 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     name: Optional[str] = Field(None, min_length=3, max_length=30)
     password: Optional[str] = Field(None, min_length=8)
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+
+class UserLoginResponse(BaseModel):
+    user: UserResponse
+    tokens: TokenResponse

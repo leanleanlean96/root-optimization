@@ -13,7 +13,6 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(225), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=True)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
 
     routes: Mapped[list["Route"]] = relationship(
         "Route",

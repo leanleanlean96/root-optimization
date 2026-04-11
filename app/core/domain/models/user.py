@@ -1,10 +1,14 @@
-from domain.exceptions import DomainError
+import hashlib
+import secrets
+from core.domain.exceptions import DomainError
+
 
 class User_name():
     def __init__(self, name: str):
         if len(name) < 3 or len(name) > 30:
             raise DomainError("Name must be between 3 and 30 characters long")
         self.name = name
+
 
 class Email():
     def __init__(self, email: str):
@@ -13,14 +17,48 @@ class Email():
         self.email = email
 
 class Password():
-    def __init__(self, password: str):
-        if len(password) < 8:
+    def __init__(self, password: str, hashed: bool = False):
+        if not hashed and len(password) < 8:
             raise DomainError("Password must be at least 8 characters long")
-        self.password = self._hash_password(password)
+        
+        if hashed:
+            self.password = password
+        else:
+            self.password = self._hash_password(password)
     
     def _hash_password(self, password: str) -> str:
-        password_hash = password.__hash__()
-        return  str(password_hash)
+        """Хэширование пароля через PBKDF2 (встроенный в Python)"""
+        salt = secrets.token_hex(16)
+        hash_value = hashlib.pbkdf2_hmac(
+            'sha256', 
+            password.encode('utf-8'), 
+            salt.encode('utf-8'), 
+            100000
+        )
+        return f"pbkdf2_sha256$100000${salt}${hash_value.hex()}"
+    
+    def verify(self, plain_password: str) -> bool:
+        """Проверка пароля"""
+        try:
+            parts = self.password.split('$')
+            if len(parts) != 4:
+                return False
+            
+            algorithm = parts[0]
+            iterations = int(parts[1])
+            salt = parts[2]
+            stored_hash = parts[3]
+            
+            new_hash = hashlib.pbkdf2_hmac(
+                'sha256',
+                plain_password.encode('utf-8'),
+                salt.encode('utf-8'),
+                iterations
+            ).hex()
+            
+            return new_hash == stored_hash
+        except Exception:
+            return False
 
 
 class User():
@@ -35,7 +73,7 @@ class User():
     def register(user_name: str, email: str, password: str) -> "User":
         user_name_obj = User_name(user_name)    
         email_obj = Email(email)
-        password_obj = Password(password)
+        password_obj = Password(password, hashed=False)
         return User(id=None, user_name=user_name_obj, email=email_obj, password=password_obj)
         
     def change_email(self, new_email: str):
@@ -45,7 +83,7 @@ class User():
         self.user_name = User_name(new_name)
 
     def change_password(self, new_password: str):
-        self.password = Password(new_password)
+        self.password = Password(new_password, hashed=False)
     
     def verify_password(self, password: str) -> bool:
-        return self.password.password == Password(password).password
+        return self.password.verify(password)

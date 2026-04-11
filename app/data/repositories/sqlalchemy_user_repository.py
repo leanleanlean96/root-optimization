@@ -17,7 +17,7 @@ class SQLAlchemyUserRepository(UserRepository):
     def _to_domain(self, user_model: UserModel) -> User:
         user_name_obj = User_name(user_model.name)
         email_obj = Email(user_model.email)
-        password_obj = Password(user_model.password)
+        password_obj = Password(user_model.password, hashed=True)
         
         return User(
             id=user_model.id,
@@ -43,12 +43,13 @@ class SQLAlchemyUserRepository(UserRepository):
         
         if user.id is None:
             self.session.add(user_model)
+            await self.session.flush()
+            user.id = user_model.id
         else:
             await self.session.merge(user_model)
+            await self.session.flush()
         
-        await self.session.flush()
-        
-        user.id = user_model.id
+        await self.session.commit()
         
         return user
     
@@ -94,5 +95,6 @@ class SQLAlchemyUserRepository(UserRepository):
         )
         
         await self.session.flush()
+        await self.session.commit()  # ДОБАВЬТЕ ЭТУ СТРОКУ
         
         return True

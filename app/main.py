@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from core.config import config
 
 from data.dbclient import db_client
-
+from api.routes.auth import router as auth_router
 from api.routes.users import router
 
 
@@ -25,6 +25,7 @@ main_app = FastAPI(
     lifespan=lifespan,
 )
 main_app.include_router(router, prefix=config.prefix.prefix)
+main_app.include_router(auth_router, prefix=config.prefix.prefix)
 
 if __name__ == "__main__":
     uvicorn.run(

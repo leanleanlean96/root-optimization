@@ -1,8 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from domain.models.user import User
-from domain.repositories.user_repository import UserRepository
-from domain.exceptions import BusinessError
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+
+from core.domain.models.user import User
+from core.domain.repositories.user_repository import UserRepository
+from core.domain.exceptions import BusinessError
+from core.config import config
+from api.shemas import UserUpdate
 
 class UserRegistrationService:
     def __init__(self, user_repository: UserRepository
@@ -34,15 +39,85 @@ class UserAuthenticationService:
         
         user = await self.user_repository.get_by_email(email)
         if not user:
+            print(f"User not found: {email}")
             return None
         
-        if not user.verify_password(password):
+        print(f"User found: {email}")
+        print(f"Password from DB (hash): {user.password.password}")
+        print(f"Password input: {password}")
+        print(f"Password input length: {len(password)}")
+        
+        is_valid = user.verify_password(password)
+        print(f"Password valid: {is_valid}")
+        
+        if not is_valid:
             return None
         
         if not user.is_active:
-            raise ValueError("User account is not active")
+            raise BusinessError("User account is not active")
         
         return user
+    
+    def create_access_token(self, user: User) -> str:
+        """Создание access токена"""
+        expire = datetime.utcnow() + timedelta(minutes=config.jwt.access_token_expire_minutes)
+        to_encode = {
+            "sub": user.email.email,
+            "user_id": user.id,
+            "exp": expire,
+            "type": "access"
+        }
+        encoded_jwt = jwt.encode(to_encode, config.jwt.secret_key, algorithm=config.jwt.algorithm)
+        return encoded_jwt
+    
+    def create_refresh_token(self, user: User) -> str:
+        """Создание refresh токена"""
+        expire = datetime.utcnow() + timedelta(days=config.jwt.refresh_token_expire_days)
+        to_encode = {
+            "sub": user.email.email,
+            "user_id": user.id,
+            "exp": expire,
+            "type": "refresh"
+        }
+        encoded_jwt = jwt.encode(to_encode, config.jwt.secret_key, algorithm=config.jwt.algorithm)
+        return encoded_jwt
+    
+    def create_tokens(self, user: User) -> dict:
+        """Создание пары токенов"""
+        return {
+            "access_token": self.create_access_token(user),
+            "refresh_token": self.create_refresh_token(user),
+            "token_type": "bearer"
+        }
+    
+    def decode_token(self, token: str) -> dict:
+        """Декодирование и валидация токена"""
+        try:
+            payload = jwt.decode(
+                token, 
+                config.jwt.secret_key, 
+                algorithms=[config.jwt.algorithm]
+            )
+            return payload
+        except JWTError as e:
+            raise BusinessError(f"Invalid token: {str(e)}")
+        
+    def refresh_access_token(self, refresh_token: str) -> str:
+        """Обновление access токена по refresh токену"""
+        payload = self.decode_token(refresh_token)
+        
+        if payload.get("type") != "refresh":
+            raise BusinessError("Invalid token type")
+        
+        expire = datetime.utcnow() + timedelta(minutes=config.jwt.access_token_expire_minutes)
+        new_payload = {
+            "sub": payload.get("sub"),
+            "user_id": payload.get("user_id"),
+            "exp": expire,
+            "type": "access"
+        }
+        new_access_token = jwt.encode(new_payload, config.jwt.secret_key, algorithm=config.jwt.algorithm)
+        return new_access_token
 
 
 class UserDuplicateCheckService:
@@ -66,7 +141,7 @@ class UserApiService:
     async def get_user_by_id(self, user_id: int) -> Optional[User]:
         return await self.repository.get_by_id(user_id)
     
-    async def update_user(self, user_id: int, user_update) -> Optional[User]:
+    async def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
         user = await self.repository.get_by_id(user_id)
         if not user:
             return None
@@ -77,7 +152,7 @@ class UserApiService:
         if user_update.email:
             user.change_email(user_update.email)
         
-        if hasattr(user_update, 'password') and user_update.password:
+        if user_update.password:
             user.change_password(user_update.password)
         
         return await self.repository.save(user)

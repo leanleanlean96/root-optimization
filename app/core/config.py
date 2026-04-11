@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from pydantic import PostgresDsn
+from pydantic import PostgresDsn, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from typing import ClassVar
@@ -30,6 +30,12 @@ class DbConfig(BaseModel):
 class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
+class JWTConfig(BaseModel):
+    secret_key: str = Field(default="your-super-secret-key-change-in-production", min_length=32)
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+    refresh_token_expire_days: int = 7
+
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
@@ -42,6 +48,7 @@ class Config(BaseSettings):
     app: AppConfig = AppConfig()
     prefix: ApiPrefix = ApiPrefix()
     db: DbConfig
+    jwt: JWTConfig = JWTConfig()
     debug: bool = False
 
 
