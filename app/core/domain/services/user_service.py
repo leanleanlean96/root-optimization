@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+import jwt
+from jwt.exceptions import PyJWTError
 
 from core.domain.models.user import User
 from core.domain.repositories.user_repository import UserRepository
@@ -99,7 +100,7 @@ class UserAuthenticationService:
                 algorithms=[config.jwt.algorithm]
             )
             return payload
-        except JWTError as e:
+        except PyJWTError as e:
             raise BusinessError(f"Invalid token: {str(e)}")
         
     def refresh_access_token(self, refresh_token: str) -> str:

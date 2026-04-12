@@ -1,12 +1,12 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
-from jose import JWTError
+from jwt.exceptions import PyJWTError
 
 from core.domain.services.user_service import UserAuthenticationService, UserApiService
 from core.domain.exceptions import BusinessError
 from data.repositories.sqlalchemy_user_repository import SQLAlchemyUserRepository
-from .db import get_session
+from api.dependencies.db import get_session
 
 
 security = HTTPBearer()
@@ -67,7 +67,7 @@ async def get_current_user(
             detail=str(e),
             headers={"WWW-Authenticate": "Bearer"},
         )
-    except JWTError:
+    except PyJWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
