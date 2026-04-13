@@ -33,7 +33,9 @@ services:
       - app-network
 
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: delivery_backend
     ports:
       - "8080:8080"
