@@ -1,25 +1,18 @@
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-
 import uvicorn
-
 from fastapi import FastAPI
-
 from app.api.routes.routes import router as routes_router
-
 from app.core.config import config
-
 from app.data.dbclient import db_client
-
 from app.application.exceptions import RouteNotFoundException
 from app.infrastructure.exceptions import (
     OsrmServiceException,
     OsrmServiceUnavailableException,
 )
 from app.core.exceptions import UnauthorizedException
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,12 +21,17 @@ async def lifespan(app: FastAPI):
     # shutdown
     await db_client.dispose()
 
-
 main_app = FastAPI(
     title=config.app.name,
     lifespan=lifespan,
 )
 
+main_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @main_app.exception_handler(RouteNotFoundException)
 async def unicorn_exception_handler(request: Request, exc: RouteNotFoundException):
@@ -41,8 +39,6 @@ async def unicorn_exception_handler(request: Request, exc: RouteNotFoundExceptio
         status_code=404,
         content={"message": f"Route Not Found"},
     )
-
-
 @main_app.exception_handler(OsrmServiceUnavailableException)
 async def unicorn_exception_handler(
     request: Request, exc: OsrmServiceUnavailableException
@@ -51,23 +47,16 @@ async def unicorn_exception_handler(
         status_code=503,
         content={"message": f"Route Service Unavailable"},
     )
-
-
 @main_app.exception_handler(OsrmServiceException)
 async def unicorn_exception_handler(request: Request, exc: OsrmServiceException):
     return JSONResponse(
         status_code=500,
         content={"message": f"Something Unusual Happened"},
     )
-
-
 @main_app.exception_handler(UnauthorizedException)
 async def unauthorized_handler(request: Request, exc: UnauthorizedException):
     return JSONResponse(status_code=401, content={"Unauthorized"})
-
-
 main_app.include_router(routes_router, prefix=config.prefix.prefix)
-
 if __name__ == "__main__":
     uvicorn.run(
         "main:main_app",
