@@ -6,7 +6,7 @@ from app.api.schemas.coordinate import CoordinateDTO
 
 class GetRouteMetricsRequest(BaseModel):
     profile: Literal["driving", "walking", "cycling"] = "driving"
-    dots: list[CoordinateDTO] = Field(min_length=2)
+    coords: list[CoordinateDTO] = Field(min_length=2)
 
 
 class GetRouteMetricsResponse(BaseModel):
