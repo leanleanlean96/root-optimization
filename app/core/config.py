@@ -44,6 +44,13 @@ class OsrmConfig(BaseModel):
     url: str
 
 
+class GeoConfig(BaseModel):
+    min_lat: float
+    min_lon: float
+    max_lat: float
+    max_lon: float
+
+
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(".env"),
@@ -57,6 +64,7 @@ class Config(BaseSettings):
     db: DbConfig
     jwt: JwtConfig
     osrm: OsrmConfig
+    geo: GeoConfig
     debug: bool = False
 
 

@@ -38,14 +38,14 @@ async def unicorn_exception_handler(request: Request, exc: RouteNotFoundExceptio
         content={"message": f"Route Not Found"},
     )
 
-@main_app.exception_handler(RouteNotFoundException)
+@main_app.exception_handler(OsrmServiceUnavailableException)
 async def unicorn_exception_handler(request: Request, exc: OsrmServiceUnavailableException):
     return JSONResponse(
         status_code=503,
         content={"message": f"Route Service Unavailable"},
     )
 
-@main_app.exception_handler(RouteNotFoundException)
+@main_app.exception_handler(OsrmServiceException)
 async def unicorn_exception_handler(request: Request, exc: OsrmServiceException):
     return JSONResponse(
         status_code=500,
