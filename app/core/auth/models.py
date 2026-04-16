@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+
 @dataclass(frozen=True, slots=True)
 class UserClaims:
     user_id: str
@@ -8,6 +9,7 @@ class UserClaims:
     type: str
     iat: datetime
     exp: datetime
+
 
 @dataclass(frozen=True, slots=True)
 class JwtTokenPair:

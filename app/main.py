@@ -14,7 +14,10 @@ from app.core.config import config
 from app.data.dbclient import db_client
 
 from app.application.exceptions import RouteNotFoundException
-from app.infrastructure.exceptions import OsrmServiceException, OsrmServiceUnavailableException
+from app.infrastructure.exceptions import (
+    OsrmServiceException,
+    OsrmServiceUnavailableException,
+)
 from app.core.exceptions import UnauthorizedException
 
 
@@ -31,6 +34,7 @@ main_app = FastAPI(
     lifespan=lifespan,
 )
 
+
 @main_app.exception_handler(RouteNotFoundException)
 async def unicorn_exception_handler(request: Request, exc: RouteNotFoundException):
     return JSONResponse(
@@ -38,12 +42,16 @@ async def unicorn_exception_handler(request: Request, exc: RouteNotFoundExceptio
         content={"message": f"Route Not Found"},
     )
 
+
 @main_app.exception_handler(OsrmServiceUnavailableException)
-async def unicorn_exception_handler(request: Request, exc: OsrmServiceUnavailableException):
+async def unicorn_exception_handler(
+    request: Request, exc: OsrmServiceUnavailableException
+):
     return JSONResponse(
         status_code=503,
         content={"message": f"Route Service Unavailable"},
     )
+
 
 @main_app.exception_handler(OsrmServiceException)
 async def unicorn_exception_handler(request: Request, exc: OsrmServiceException):
@@ -52,9 +60,11 @@ async def unicorn_exception_handler(request: Request, exc: OsrmServiceException)
         content={"message": f"Something Unusual Happened"},
     )
 
+
 @main_app.exception_handler(UnauthorizedException)
 async def unauthorized_handler(request: Request, exc: UnauthorizedException):
     return JSONResponse(status_code=401, content={"Unauthorized"})
+
 
 main_app.include_router(routes_router, prefix=config.prefix.prefix)
 

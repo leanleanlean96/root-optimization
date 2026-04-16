@@ -83,7 +83,7 @@ async def get_route_metrics(
 ):
     result: GetRouteMetricsOutput = await usecase.execute(
         GetRouteMetricsInput(
-            coords=[dot.to_domain() for dot in body.dots],
+            coords=[dot.to_domain() for dot in body.coords],
             profile=body.profile,
         )
     )
@@ -101,7 +101,7 @@ async def optimize_route(
 ):
     result: GetRouteMetricsOutput = await usecase.execute(
         GetRouteMetricsInput(
-            coords=[dot.to_domain() for dot in body.dots],
+            coords=[dot.to_domain() for dot in body.coords],
             profile=body.profile,
         )
     )
@@ -123,9 +123,7 @@ async def random_coordinates(
         get_generate_random_coordinates_usecase
     ),
 ):
-    result = await usecase.execute(
-        GenerateRandomCoordinatesInput(count=body.count)
-    )
+    result = await usecase.execute(GenerateRandomCoordinatesInput(count=body.count))
     return GenerateRandomCoordinatesResponse(
         coords=[CoordinateDTO.from_domain(c) for c in result.coords],
     )
