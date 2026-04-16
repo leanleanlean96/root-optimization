@@ -1,9 +1,9 @@
 from sqlalchemy import String, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.postgresql import JSONB
+from geoalchemy2 import Geometry, WKBElement
 
 from .base import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -11,12 +11,13 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(30), nullable=False)
     email: Mapped[str] = mapped_column(String(225), nullable=False, unique=True)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     routes: Mapped[list["Route"]] = relationship(
         "Route",
         back_populates="user",
     )
+
 
 class Route(Base):
     __tablename__ = "routes"
@@ -24,10 +25,11 @@ class Route(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     distance_m: Mapped[float] = mapped_column(nullable=False)
     duration_s: Mapped[float] = mapped_column(nullable=False)
-    geometry: Mapped[dict] = mapped_column(
-        MutableDict.as_mutable(JSONB),
+    geometry = mapped_column(
+        Geometry(geometry_type="LINESTRING", srid=4326),
         nullable=False,
     )
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     user_id: Mapped[int] = mapped_column(
         Integer,
@@ -38,4 +40,3 @@ class Route(Base):
         "User",
         back_populates="routes",
     )
-    
