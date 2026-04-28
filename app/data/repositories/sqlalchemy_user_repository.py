@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from typing import Optional, List
+from sqlalchemy.engine import CursorResult
+from typing import Optional
 
-from core.domain.models.user import User, Password, User_name, Email
+from core.domain.models.user import User
 from core.domain.repositories.user_repository import UserRepository
 
 from data.schemas import User as UserModel
@@ -15,15 +16,11 @@ class SQLAlchemyUserRepository(UserRepository):
         self.session = session
     
     def _to_domain(self, user_model: UserModel) -> User:
-        user_name_obj = User_name(user_model.name)
-        email_obj = Email(user_model.email)
-        password_obj = Password(user_model.password, hashed=True)
-        
         return User(
             id=user_model.id,
-            user_name=user_name_obj,
-            email=email_obj,
-            password=password_obj,
+            name=user_model.name,
+            email=user_model.email,
+            password=user_model.password,
             is_active=user_model.is_active,
         )
     
@@ -31,9 +28,9 @@ class SQLAlchemyUserRepository(UserRepository):
         """Преобразовать доменную сущность в ORM модель"""
         return UserModel(
             id=user.id,
-            email=user.email.email,
-            name=user.user_name.name,
-            password=user.password.password,
+            email=user.email,
+            name=user.name,
+            password=user.password,
             is_active=user.is_active,
         )
     
@@ -82,19 +79,12 @@ class SQLAlchemyUserRepository(UserRepository):
         return result.scalar_one_or_none() is not None
     
     async def delete(self, user_id: int) -> bool:
-        result = await self.session.execute(
-            select(UserModel.id).where(UserModel.id == user_id)
-        )
-        exists = result.scalar_one_or_none() is not None
-        
-        if not exists:
+        user = await self.get_by_id(user_id)
+        if not user:
             return False
         
         await self.session.execute(
             delete(UserModel).where(UserModel.id == user_id)
         )
-        
-        await self.session.flush()
-        await self.session.commit()  # ДОБАВЬТЕ ЭТУ СТРОКУ
-        
+        await self.session.commit()
         return True

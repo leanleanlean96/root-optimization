@@ -1,19 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
 
-from api.shemas import UserCreate, UserResponse, UserUpdate
-from core.domain.services.user_service import UserRegistrationService, UserApiService
+from api.schemas import UserCreate, UserResponse, UserUpdate
+from core.auth.encryption_service import EncryptionService
+from core.domain.models.user import User
 from data.repositories.sqlalchemy_user_repository import SQLAlchemyUserRepository
 from api.dependencies import get_current_active_user, get_session
-from core.domain.models.user import User
 
 router = APIRouter(prefix="/users", tags=["users"])
+
 
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(user_create: UserCreate, session: AsyncSession = Depends(get_session)):
     repository = SQLAlchemyUserRepository(session)
-    service = UserRegistrationService(repository)
 
     if await repository.exists_by_email(user_create.email):
         raise HTTPException(
@@ -21,13 +20,15 @@ async def create_user(user_create: UserCreate, session: AsyncSession = Depends(g
             detail="Email already registered"
         )
     
-    user = await service.register(user_create.name, user_create.email, user_create.password)
+    hashed_password = EncryptionService.hash_password(user_create.password)
+    user = User.register(user_create.name, user_create.email, hashed_password)
+    saved_user = await repository.save(user)
     
     return UserResponse(
-        id=user.id,
-        email=user.email.email,
-        name=user.user_name.name,
-        is_active=user.is_active
+        id=saved_user.id,
+        email=saved_user.email,
+        name=saved_user.name,
+        is_active=saved_user.is_active
     )
 
 
@@ -44,8 +45,7 @@ async def get_user(
         )
     
     repository = SQLAlchemyUserRepository(session)
-    service = UserApiService(repository)
-    user = await service.get_user_by_id(user_id)
+    user = await repository.get_by_id(user_id)
     
     if not user:
         raise HTTPException(
@@ -55,8 +55,8 @@ async def get_user(
     
     return UserResponse(
         id=user.id,
-        email=user.email.email,
-        name=user.user_name.name,
+        email=user.email,
+        name=user.name,
         is_active=user.is_active
     )
 
@@ -75,35 +75,35 @@ async def update_user(
         )
     
     repository = SQLAlchemyUserRepository(session)
-    service = UserApiService(repository)
     
-    existing_user = await service.get_user_by_id(user_id)
+    existing_user = await repository.get_by_id(user_id)
     if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User {user_id} not found"
         )
     
-    if user_data.email and user_data.email != existing_user.email.email:
+    if user_data.email is not None and user_data.email != existing_user.email:
         if await repository.exists_by_email(user_data.email):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already registered"
             )
+        existing_user.email = user_data.email
     
-    user = await service.update_user(user_id, user_data)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User {user_id} not found"
-        )
+    if user_data.name is not None:
+        existing_user.name = user_data.name
+    
+    if user_data.password is not None:
+        existing_user.password = EncryptionService.hash_password(user_data.password)
+    
+    saved_user = await repository.save(existing_user)
     
     return UserResponse(
-        id=user.id,
-        email=user.email.email,
-        name=user.user_name.name,
-        is_active=user.is_active
+        id=saved_user.id,
+        email=saved_user.email,
+        name=saved_user.name,
+        is_active=saved_user.is_active
     )
 
 
@@ -120,9 +120,8 @@ async def delete_user(
         )
     
     repository = SQLAlchemyUserRepository(session)
-    service = UserApiService(repository)
     
-    if not await service.delete(user_id):
+    if not await repository.delete(user_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User {user_id} not found"
