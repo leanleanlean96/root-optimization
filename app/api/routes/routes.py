@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, Path, Response
 
 from app.api.schemas.coordinate import CoordinateDTO
 from app.api.schemas.create_route import CreateRouteRequest, CreateRouteResponse
@@ -48,7 +48,7 @@ async def create_route(
     result: CreateRouteOutput = await usecase.execute(
         CreateRouteInput(
             user_id=body.user_id,
-            coords=[dot.to_domain() for dot in body.dots],
+            coords=[dot.to_domain() for dot in body.coords],
             profile=body.profile,
         )
     )
@@ -59,7 +59,6 @@ async def create_route(
         duration=result.duration,
         geometry=result.geometry,
     )
-
 
 @router.get("/{route_id}", response_model=GetRouteResponse, status_code=200)
 async def get_route_by_id(

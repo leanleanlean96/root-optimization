@@ -67,5 +67,4 @@ class Config(BaseSettings):
     geo: GeoConfig
     debug: bool = False
 
-
 config = Config()

@@ -1,14 +1,8 @@
-from fastapi import Depends, Header
+from fastapi import Depends, Header, Request
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator
 
-from app.core.auth.auth_service import JwtAuthService
-from app.core.auth.models import UserClaims
-from app.core.config import config
-from app.data.dbclient import db_client
-from app.data.repositories.routes_repository import RouteRepository
-from app.infrastructure.osrm_client import OsrmClient
 from app.application.use_cases.create_route import CreateRouteUseCase
 from app.application.use_cases.delete_route import DeleteRouteUseCase
 from app.application.use_cases.generate_random_coordinates import (
@@ -26,49 +20,24 @@ from app.core.exceptions import (
     TokenExpiredException,
     UnauthorizedException,
 )
-from app.data.dbclient import db_client
 from app.data.repositories.routes_repository import RouteRepository
 from app.domain.models.coordinate import BoundingBox
-from app.domain.services.coordinate_generator_service import CoordinateGenerator
+from app.domain.services.coordinate_generator_service import (
+    CoordinateGenerator as CoordinateGeneratorService,
+)
 from app.infrastructure.coordinate_generator import (
     CoordinateGenerator,
 )
 from app.infrastructure.osrm_client import OsrmClient
 
 
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    async for session in db_client.session_getter():
+async def get_db_session(request: Request) -> AsyncGenerator[AsyncSession, None]:
+    async for session in request.app.state.db_client.session_getter():
         yield session
 
 
-async def get_http_client() -> AsyncGenerator[AsyncClient, None]:
-    async with AsyncClient(timeout=30.0) as client:
-        yield client
-
-
-def get_auth_service() -> JwtAuthService:
-    return JwtAuthService(
-        secret=config.jwt.secret_key,
-        access_timedelta=config.jwt.access_key_delta,
-        refresh_timedelta=config.jwt.refresh_key_delta,
-        algorithm=config.jwt.algorithm,
-    )
-
-
-async def get_user_claims(
-    auth_string: str = Header(...),
-    auth_service: JwtAuthService = Depends(get_auth_service),
-) -> UserClaims:
-    try:
-        token = auth_string.removeprefix("Bearer ")
-        return auth_service.get_payload_data(token)
-    # TODO: add custom JWTservice exceptions
-    except (
-        TokenExpiredException,
-        InvalidTokenException,
-        InvalidTokenTypeException,
-    ) as e:
-        raise UnauthorizedException(f"Unauthorized: {e}")
+async def get_http_client(request: Request) -> AsyncGenerator[AsyncClient, None]:
+    yield request.app.state.http_client
 
 
 def get_auth_service() -> JwtAuthService:
@@ -117,7 +86,7 @@ def get_bbox() -> BoundingBox:
     )
 
 
-def get_coordinate_generator() -> CoordinateGenerator:
+def get_coordinate_generator() -> CoordinateGeneratorService:
     return CoordinateGenerator()
 
 

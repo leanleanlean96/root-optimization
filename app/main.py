@@ -2,11 +2,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from httpx import AsyncClient
 import uvicorn
 from fastapi import FastAPI
 from app.api.routes.routes import router as routes_router
 from app.core.config import config
-from app.data.dbclient import db_client
+from app.data.dbclient import DbClient
 from app.application.exceptions import RouteNotFoundException
 from app.infrastructure.exceptions import (
     OsrmServiceException,
@@ -16,10 +17,23 @@ from app.core.exceptions import UnauthorizedException
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startup
+    #startup
+    db_client = DbClient(
+        url=str(config.db.url),
+        echo=config.db.echo,
+        echo_pool=config.db.echo_pool,
+        pool_size=config.db.pool_size,
+        max_overflow=config.db.max_overflow,
+    )
+
+    app.state.db_client = db_client
+
+    http_client = AsyncClient(timeout=30.0)
+    app.state.http_client = http_client
     yield
     # shutdown
-    await db_client.dispose()
+    await app.state.http_client.aclose()
+    await app.state.db_client.dispose()
 
 main_app = FastAPI(
     title=config.app.name,
@@ -28,7 +42,7 @@ main_app = FastAPI(
 
 main_app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[config.app.frontend_url],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -56,7 +70,9 @@ async def unicorn_exception_handler(request: Request, exc: OsrmServiceException)
 @main_app.exception_handler(UnauthorizedException)
 async def unauthorized_handler(request: Request, exc: UnauthorizedException):
     return JSONResponse(status_code=401, content={"Unauthorized"})
+
 main_app.include_router(routes_router, prefix=config.prefix.prefix)
+
 if __name__ == "__main__":
     uvicorn.run(
         "main:main_app",

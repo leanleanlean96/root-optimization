@@ -47,12 +47,12 @@ class OsrmClient:
         coords = ";".join(f"{c.lon},{c.lat}" for c in dots)
         url = f"{self.service_url}/trip/v1/{profile}/{coords}"
         params = {
-            "roundtrip": "true",
-            "source": "first",
-            "destination": "any",
-            "steps": "false",
-            "geometries": "geojson",
-            "overview": "full",
+        "roundtrip": "false",
+        "source": "first",
+        "destination": "last",
+        "steps": "false",
+        "geometries": "geojson",
+        "overview": "full",
         }
         try:
             resp = await self.client.get(url, params=params, timeout=30.0)

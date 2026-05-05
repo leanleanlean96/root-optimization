@@ -74,7 +74,7 @@ class JwtAuthService:
             if payload.get("type") != "access":
                 raise InvalidTokenTypeException("Provided token is not an access token")
             return UserClaims(
-                user_id=payload.get("id"),
+                user_id=payload.get("sub"),
                 user_email=payload.get("email"),
                 type=payload.get("type"),
                 iat=payload.get("iat"),

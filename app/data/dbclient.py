@@ -38,13 +38,3 @@ class DbClient:
     async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
             yield session
-
-
-# TODO: move to lifespan
-db_client = DbClient(
-    url=str(config.db.url),
-    echo=config.db.echo,
-    echo_pool=config.db.echo_pool,
-    pool_size=config.db.pool_size,
-    max_overflow=config.db.max_overflow,
-)
