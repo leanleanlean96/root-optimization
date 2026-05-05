@@ -7,7 +7,6 @@ from app.domain.models.route import RouteMetrics
 
 @pytest.mark.asyncio
 async def test_get_route_metrics_usecase():
-    # Мок OsrmService
     mock_osrm = AsyncMock()
     fake_route = RouteMetrics(distance=123.4, duration=56.7, geometry={"type": "LineString"})
     mock_osrm.get_route_metrics.return_value = fake_route

@@ -7,13 +7,11 @@ from app.domain.models.route import RouteMetrics, RouteData
 
 @pytest.mark.asyncio
 async def test_create_route_usecase_success():
-    # 1. Подготовка данных
     coords = [Coordinate(lat=55.751, lon=37.618), Coordinate(lat=55.752, lon=37.619)]
     profile = "driving"
     user_id = 42
     input_data = CreateRouteInput(user_id=user_id, coords=coords, profile=profile)
 
-    # 2. Мок OsrmService
     mock_osrm = AsyncMock()
     fake_metrics = RouteMetrics(
         distance=1234.5,
@@ -22,7 +20,6 @@ async def test_create_route_usecase_success():
     )
     mock_osrm.get_route_metrics.return_value = fake_metrics
 
-    # 3. Мок RouteRepository
     mock_repo = AsyncMock()
     fake_route_data = RouteData(
         id=1,
@@ -31,11 +28,9 @@ async def test_create_route_usecase_success():
     )
     mock_repo.create_route.return_value = fake_route_data
 
-    # 4. Выполнение usecase
     usecase = CreateRouteUseCase(osrm_client=mock_osrm, route_repo=mock_repo)
     result = await usecase.execute(input_data)
 
-    # 5. Проверки
     mock_osrm.get_route_metrics.assert_awaited_once_with(dots=coords, profile=profile)
     mock_repo.create_route.assert_awaited_once_with(user_id, fake_metrics)
     assert isinstance(result, CreateRouteOutput)

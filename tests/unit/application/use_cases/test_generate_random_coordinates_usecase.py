@@ -30,8 +30,6 @@ async def test_generate_random_coordinates_returns_correct_count(mock_generator,
 @pytest.mark.asyncio
 async def test_generate_random_coordinates_default_count(mock_generator, mock_bbox):
     usecase = GenerateRandomCoordinatesUseCase(generator=mock_generator, bbox=mock_bbox)
-    # Предполагаем, что в Input значение по умолчанию count=10 (или другое). 
-    # Если нет значения по умолчанию, укажем явно, например count=10.
     input_data = GenerateRandomCoordinatesInput(count=10)
     result = await usecase.execute(input_data)
 

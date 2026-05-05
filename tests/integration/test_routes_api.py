@@ -1,7 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock
-from app.main import app
 from app.core.dependencies import (
     get_route_metrics_usecase,
     get_optimize_route_usecase,
@@ -17,11 +16,12 @@ from app.domain.models.coordinate import Coordinate
 
 @pytest.fixture
 def client():
+    from app.main import app
     return TestClient(app)
 
-# ========== /routes/metrics ==========
 
 def test_post_route_metrics_success(client):
+    from app.main import app
     mock_usecase = AsyncMock()
     mock_usecase.execute.return_value = GetRouteMetricsOutput(
         distance=1234.5,
@@ -39,7 +39,7 @@ def test_post_route_metrics_success(client):
     assert data["distance"] == 1234.5
     assert data["duration"] == 678.9
     app.dependency_overrides.clear()
-# ========== /routes/optimize ==========
+
 
 def test_post_route_optimize_success(client):
     mock_usecase = AsyncMock()
@@ -57,8 +57,6 @@ def test_post_route_optimize_success(client):
     assert response.status_code == 200
     assert response.json()["distance"] == 500
     app.dependency_overrides.clear()
-
-# ========== /routes/create ==========
 
 def test_post_create_route_success(client):
     mock_usecase = AsyncMock()
@@ -90,8 +88,6 @@ def test_post_create_route_empty_dots(client):
     })
     assert response.status_code == 422
 
-# ========== /routes/{route_id} ==========
-
 def test_get_route_by_id_success(client):
     mock_usecase = AsyncMock()
     mock_usecase.execute.return_value = GetRouteOutput(
@@ -109,14 +105,6 @@ def test_get_route_by_id_success(client):
     assert data["route_id"] == 10
     assert data["user_id"] == 2
     app.dependency_overrides.clear()
-
-@pytest.mark.skip(reason="Requires exception handler for RouteNotFoundException in main code")
-def test_get_route_by_id_not_found(client):
-    # Этот тест временно пропущен, потому что в коде может не быть обработчика 404.
-    # Когда добавите глобальный exception handler – раскомментируйте.
-    pass
-
-# ========== /routes/random-coordinates ==========
 
 def test_post_random_coordinates_success(client):
     mock_usecase = AsyncMock()
