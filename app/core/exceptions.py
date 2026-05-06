@@ -1,14 +1,17 @@
-class UnauthorizedException(Exception):
+class JWTException(Exception):
+    pass
+
+class UnauthorizedException(JWTException):
     pass
 
 
-class TokenExpiredException(Exception):
+class TokenExpiredException(JWTException):
     pass
 
 
-class InvalidTokenException(Exception):
+class InvalidTokenException(JWTException):
     pass
 
 
-class InvalidTokenTypeException(Exception):
+class InvalidTokenTypeException(JWTException):
     pass

@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field
 from typing import Any, Literal
 
-from app.api.schemas.coordinate import CoordinateDTO
+from pydantic import BaseModel, Field
+
+from app.api.schemas.routes.coordinate import CoordinateDTO
 
 
 class GetRouteMetricsRequest(BaseModel):

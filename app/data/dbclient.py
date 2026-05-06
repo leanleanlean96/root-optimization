@@ -1,12 +1,11 @@
-from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    AsyncEngine,
-    async_sessionmaker,
-    AsyncSession,
-)
 from typing import AsyncGenerator
 
-from app.core.config import config
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 
 class DbClient:
@@ -38,13 +37,3 @@ class DbClient:
     async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
             yield session
-
-
-# TODO: move to lifespan
-db_client = DbClient(
-    url=str(config.db.url),
-    echo=config.db.echo,
-    echo_pool=config.db.echo_pool,
-    pool_size=config.db.pool_size,
-    max_overflow=config.db.max_overflow,
-)

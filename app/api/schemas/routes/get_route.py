@@ -1,5 +1,6 @@
+from typing import Any
+
 from pydantic import BaseModel, Field
-from typing import Any, Literal
 
 
 class GetRouteResponse(BaseModel):

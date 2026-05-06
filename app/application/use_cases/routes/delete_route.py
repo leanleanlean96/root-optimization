@@ -1,8 +1,8 @@
-from app.domain.repositories.route_repo import RouteRepository
+from app.application.models.delete_route import DeleteRouteInput
 from app.domain.models.route import RouteData
+from app.domain.repositories.route_repo import RouteRepository
 
-from .models.delete_user import DeleteRouteInput
-from ..exceptions import RouteNotFoundException
+from ...exceptions import RouteNotFoundException
 
 
 class DeleteRouteUseCase:

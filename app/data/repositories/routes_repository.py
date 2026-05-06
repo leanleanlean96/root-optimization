@@ -1,10 +1,10 @@
 import json
+
+from geoalchemy2.shape import from_shape, to_shape
 from shapely import to_geojson
 from shapely.geometry import shape
-from geoalchemy2.shape import from_shape, to_shape
-
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.models.route import RouteData, RouteMetrics
 
@@ -34,7 +34,7 @@ class RouteRepository:
 
     async def get_route_by_id(self, route_id: int) -> RouteData | None:
         query_result = await self.session.execute(
-            select(Route).where(Route.id == route_id, Route.is_deleted == False)
+            select(Route).where(Route.id == route_id)
         )
 
         db_route = query_result.scalar_one_or_none()
@@ -58,7 +58,7 @@ class RouteRepository:
 
     async def get_routes_by_user_id(self, user_id: int) -> list[RouteData]:
         query_result = await self.session.execute(
-            select(Route).where(Route.user_id == user_id, Route.is_deleted == False)
+            select(Route).where(Route.user_id == user_id, not Route.is_deleted)
         )
 
         user_routes = query_result.scalars().all()

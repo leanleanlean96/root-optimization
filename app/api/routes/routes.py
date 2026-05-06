@@ -1,34 +1,34 @@
 from fastapi import APIRouter, Depends, Path
 
-from app.api.schemas.coordinate import CoordinateDTO
-from app.api.schemas.create_route import CreateRouteRequest, CreateRouteResponse
-from app.api.schemas.generate_random_coordinates import (
+from app.api.schemas.routes.coordinate import CoordinateDTO
+from app.api.schemas.routes.create_route import CreateRouteRequest, CreateRouteResponse
+from app.api.schemas.routes.generate_random_coordinates import (
     GenerateRandomCoordinatesRequest,
     GenerateRandomCoordinatesResponse,
 )
-from app.api.schemas.get_route import GetRouteResponse
-from app.api.schemas.get_route_metrics import (
+from app.api.schemas.routes.get_route import GetRouteResponse
+from app.api.schemas.routes.get_route_metrics import (
     GetRouteMetricsRequest,
     GetRouteMetricsResponse,
 )
-from app.application.use_cases.create_route import CreateRouteUseCase
-from app.application.use_cases.generate_random_coordinates import (
-    GenerateRandomCoordinatesUseCase,
-)
-from app.application.use_cases.get_route import GetRouteByIdUseCase
-from app.application.use_cases.get_route_metrics import GetRouteMetricsUseCase
-from app.application.use_cases.models.create_route import (
+from app.application.models.create_route import (
     CreateRouteInput,
     CreateRouteOutput,
 )
-from app.application.use_cases.models.generate_random_coordinates import (
+from app.application.models.generate_random_coordinates import (
     GenerateRandomCoordinatesInput,
 )
-from app.application.use_cases.models.get_route import GetRouteInput, GetRouteOutput
-from app.application.use_cases.models.get_route_metrics import (
+from app.application.models.get_route import GetRouteInput, GetRouteOutput
+from app.application.models.get_route_metrics import (
     GetRouteMetricsInput,
     GetRouteMetricsOutput,
 )
+from app.application.use_cases.routes.create_route import CreateRouteUseCase
+from app.application.use_cases.routes.generate_random_coordinates import (
+    GenerateRandomCoordinatesUseCase,
+)
+from app.application.use_cases.routes.get_route import GetRouteByIdUseCase
+from app.application.use_cases.routes.get_route_metrics import GetRouteMetricsUseCase
 from app.core.dependencies import (
     get_create_route_usecase,
     get_generate_random_coordinates_usecase,
@@ -48,7 +48,7 @@ async def create_route(
     result: CreateRouteOutput = await usecase.execute(
         CreateRouteInput(
             user_id=body.user_id,
-            coords=[dot.to_domain() for dot in body.dots],
+            coords=[dot.to_domain() for dot in body.coords],
             profile=body.profile,
         )
     )
@@ -59,7 +59,6 @@ async def create_route(
         duration=result.duration,
         geometry=result.geometry,
     )
-
 
 @router.get("/{route_id}", response_model=GetRouteResponse, status_code=200)
 async def get_route_by_id(

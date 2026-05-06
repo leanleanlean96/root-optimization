@@ -1,15 +1,15 @@
 from datetime import timedelta
-from pydantic import BaseModel
-from pydantic import PostgresDsn
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
 from typing import ClassVar
+
+from pydantic import BaseModel, PostgresDsn
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AppConfig(BaseModel):
     name: str = "RootOptimization"
     host: str = "0.0.0.0"
     port: int = 8080
+    frontend_url: str = "http://localhost:3000"
 
 
 class JwtConfig(BaseModel):
@@ -66,6 +66,5 @@ class Config(BaseSettings):
     osrm: OsrmConfig
     geo: GeoConfig
     debug: bool = False
-
 
 config = Config()
