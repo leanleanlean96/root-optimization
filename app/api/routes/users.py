@@ -35,13 +35,12 @@ async def create_user(
         email=result.email,
     )
 
-@router.get("/{user_id}", response_model=UserResponse, status_code=200)
-async def get_user_by_id(
-    user_id: int = Path(gt=0),
+@router.get("/me", response_model=UserResponse, status_code=200)
+async def get_me(
     usecase: GetUserUseCase = Depends(get_get_user_usecase),
     claims: UserClaims = Depends(get_user_claims),
 ):
-    result: User = await usecase.execute(user_id)
+    result: User = await usecase.execute(claims.user_id)
     return UserResponse(
         id=result.id,
         name=result.name,
