@@ -1,7 +1,7 @@
 from app.domain.services.osrm_service import OsrmService
 from app.domain.repositories.route_repo import RouteRepository
 from app.domain.models.route import RouteData, RouteMetrics
-from .models.create_route import CreateRouteInput, CreateRouteOutput
+from app.application.models.create_route import CreateRouteInput, CreateRouteOutput
 
 
 class CreateRouteUseCase:

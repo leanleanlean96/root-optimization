@@ -1,7 +1,7 @@
 from app.domain.models.coordinate import BoundingBox
 from app.domain.services.coordinate_generator_service import CoordinateGenerator
 
-from .models.generate_random_coordinates import (
+from app.application.models.generate_random_coordinates import (
     GenerateRandomCoordinatesInput,
     GenerateRandomCoordinatesOutput,
 )
