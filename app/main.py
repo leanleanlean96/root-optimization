@@ -6,6 +6,8 @@ from httpx import AsyncClient
 import uvicorn
 from fastapi import FastAPI
 from app.api.routes.routes import router as routes_router
+from app.api.routes.users import router as users_router
+from app.api.routes.auth import router as auth_router
 from app.core.config import config
 from app.data.dbclient import DbClient
 from app.application.exceptions import RouteNotFoundException
@@ -69,9 +71,11 @@ async def unicorn_exception_handler(request: Request, exc: OsrmServiceException)
     )
 @main_app.exception_handler(UnauthorizedException)
 async def unauthorized_handler(request: Request, exc: UnauthorizedException):
-    return JSONResponse(status_code=401, content={"Unauthorized"})
+    return JSONResponse(status_code=401, content={"message": "Unauthorized"})
 
 main_app.include_router(routes_router, prefix=config.prefix.prefix)
+main_app.include_router(users_router, prefix=config.prefix.prefix)
+main_app.include_router(auth_router, prefix=config.prefix.prefix)
 
 if __name__ == "__main__":
     uvicorn.run(
