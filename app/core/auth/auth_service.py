@@ -25,7 +25,7 @@ class JwtAuthService:
         now = datetime.now(timezone.utc)
 
         access_payload = {
-            "sub": user_id,
+            "sub": str(user_id),
             "email": email,
             "type": "access",
             "iat": now,
@@ -35,7 +35,7 @@ class JwtAuthService:
         access_token = jwt.encode(access_payload, self.secret, algorithm=self.algorithm)
 
         refresh_payload = {
-            "sub": user_id,
+            "sub": str(user_id),
             "email": email,
             "type": "refresh",
             "iat": now,
@@ -74,11 +74,11 @@ class JwtAuthService:
             if payload.get("type") != "access":
                 raise InvalidTokenTypeException("Provided token is not an access token")
             return UserClaims(
-                user_id=payload.get("sub"),
+                user_id=int(payload.get("sub")),
                 user_email=payload.get("email"),
                 type=payload.get("type"),
-                iat=payload.get("iat"),
-                exp=payload.get("exp"),
+                iat=datetime.fromtimestamp(payload.get("iat"), timezone.utc),
+                exp=datetime.fromtimestamp(payload.get("exp"), timezone.utc),
             )
         except jwt.ExpiredSignatureError as err:
             raise TokenExpiredException("Provided access token has expired") from err

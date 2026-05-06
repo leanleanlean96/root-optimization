@@ -4,7 +4,7 @@ from datetime import datetime
 
 @dataclass(frozen=True, slots=True)
 class UserClaims:
-    user_id: str
+    user_id: int
     user_email: str
     type: str
     iat: datetime

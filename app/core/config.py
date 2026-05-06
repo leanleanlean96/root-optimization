@@ -10,6 +10,7 @@ class AppConfig(BaseModel):
     name: str = "RootOptimization"
     host: str = "0.0.0.0"
     port: int = 8080
+    frontend_url: str = "http://localhost:3000"
 
 
 class JwtConfig(BaseModel):
