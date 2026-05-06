@@ -1,8 +1,11 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from typing import Optional
-from app.domain.models.user import User
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.application.models.auth_user import AuthUser
+from app.domain.models.user import User
+
 from ..schemas import User as UserData
 
 

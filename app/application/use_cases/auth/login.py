@@ -1,7 +1,7 @@
-from app.application.exceptions import UnauthorizedException
 from app.core.auth.auth_service import JwtAuthService
 from app.core.auth.encryption_service import EncryptionService
 from app.core.auth.models import JwtTokenPair
+from app.core.exceptions import UnauthorizedException
 from app.data.repositories.user_repository import UserRepository
 
 

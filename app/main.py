@@ -1,20 +1,27 @@
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from httpx import AsyncClient
-import uvicorn
+
+from app.api.routes.auth import router as auth_router
 from app.api.routes.routes import router as routes_router
 from app.api.routes.users import router as users_router
-from app.api.routes.auth import router as auth_router
+from app.application.exceptions import (
+    RouteNotFoundException,
+    UserExistsException,
+    UserNotFoundException,
+)
 from app.core.config import config
+from app.core.exceptions import JWTException, UnauthorizedException
 from app.data.dbclient import DbClient
-from app.application.exceptions import RouteNotFoundException
 from app.infrastructure.exceptions import (
     OsrmServiceException,
     OsrmServiceUnavailableException,
 )
-from app.core.exceptions import UnauthorizedException
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -68,9 +75,38 @@ async def unicorn_osrm_service_exception_handler(request: Request, exc: OsrmServ
         status_code=500,
         content={"message": "Something Unusual Happened"},
     )
-@main_app.unauthorized_handler(UnauthorizedException)
+@main_app.exception_handler(UnauthorizedException)
 async def unauthorized_handler(request: Request, exc: UnauthorizedException):
     return JSONResponse(status_code=401, content={"message": "Unauthorized"})
+
+@main_app.exception_handler(JWTException)
+async def jwt_exception_handler(request: Request, exc: JWTException):
+    return JSONResponse(
+        status_code=401,
+        content={"message": "Unauthorized"},
+    )
+
+@main_app.exception_handler(UserExistsException)
+async def user_exists_handler(request: Request, exc: UserExistsException):
+    return JSONResponse(
+        status_code=409,
+        content={"message": "User already exists"},
+    )
+
+@main_app.exception_handler(UserNotFoundException)
+async def user_not_found_handler(request: Request, exc: UserNotFoundException):
+    return JSONResponse(
+        status_code=404,
+        content={"message": "User not found"},
+    )
+
+@main_app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    return JSONResponse(
+        status_code=400,
+        content={"message": "Bad Request"},
+    )
+
 
 main_app.include_router(routes_router, prefix=config.prefix.prefix)
 main_app.include_router(users_router, prefix=config.prefix.prefix)

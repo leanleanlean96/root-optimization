@@ -1,20 +1,28 @@
 from fastapi import APIRouter, Depends, Response
 
 from app.api.schemas.users.create_user import CreateUserInput
-from app.api.schemas.users.update_user import UpdateUserInput
 from app.api.schemas.users.update_password import UpdatePasswordInput
-from app.application.use_cases.users.get_user import GetUserUseCase
+from app.api.schemas.users.update_user import UpdateUserInput
 from app.api.schemas.users.user_response import UserResponse
 from app.application.use_cases.users.create_user import CreateUserUseCase
-from app.application.use_cases.users.update_user import UpdateUserUseCase
 from app.application.use_cases.users.delete_user import DeleteUserUseCase
-from app.application.use_cases.users.update_user_password import UpdateUserPasswordUseCase
-from app.core.auth.models import UserClaims
-from app.data.schemas import User
-from app.core.dependencies import get_create_user_usecase, get_get_user_usecase, get_update_user_usecase, get_delete_user_usecase, get_update_user_password_usecase
-from app.core.dependencies import get_user_claims
-from app.core.dependencies import get_encryption_service
+from app.application.use_cases.users.get_user import GetUserUseCase
+from app.application.use_cases.users.update_user import UpdateUserUseCase
+from app.application.use_cases.users.update_user_password import (
+    UpdateUserPasswordUseCase,
+)
 from app.core.auth.encryption_service import EncryptionService
+from app.core.auth.models import UserClaims
+from app.core.dependencies import (
+    get_create_user_usecase,
+    get_delete_user_usecase,
+    get_encryption_service,
+    get_get_user_usecase,
+    get_update_user_password_usecase,
+    get_update_user_usecase,
+    get_user_claims,
+)
+from app.data.schemas import User
 
 router = APIRouter(prefix="/users", tags=["users"])
 

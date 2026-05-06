@@ -11,12 +11,6 @@ from app.api.schemas.routes.get_route_metrics import (
     GetRouteMetricsRequest,
     GetRouteMetricsResponse,
 )
-from app.application.use_cases.routes.create_route import CreateRouteUseCase
-from app.application.use_cases.routes.generate_random_coordinates import (
-    GenerateRandomCoordinatesUseCase,
-)
-from app.application.use_cases.routes.get_route import GetRouteByIdUseCase
-from app.application.use_cases.routes.get_route_metrics import GetRouteMetricsUseCase
 from app.application.models.create_route import (
     CreateRouteInput,
     CreateRouteOutput,
@@ -29,6 +23,12 @@ from app.application.models.get_route_metrics import (
     GetRouteMetricsInput,
     GetRouteMetricsOutput,
 )
+from app.application.use_cases.routes.create_route import CreateRouteUseCase
+from app.application.use_cases.routes.generate_random_coordinates import (
+    GenerateRandomCoordinatesUseCase,
+)
+from app.application.use_cases.routes.get_route import GetRouteByIdUseCase
+from app.application.use_cases.routes.get_route_metrics import GetRouteMetricsUseCase
 from app.core.dependencies import (
     get_create_route_usecase,
     get_generate_random_coordinates_usecase,

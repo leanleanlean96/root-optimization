@@ -1,7 +1,7 @@
-from app.domain.repositories.route_repo import RouteRepository
-from app.domain.models.route import RouteData
-
 from app.application.models.get_route import GetRouteInput, GetRouteOutput
+from app.domain.models.route import RouteData
+from app.domain.repositories.route_repo import RouteRepository
+
 from ...exceptions import RouteNotFoundException
 
 

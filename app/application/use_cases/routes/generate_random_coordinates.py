@@ -1,10 +1,9 @@
-from app.domain.models.coordinate import BoundingBox
-from app.domain.services.coordinate_generator_service import CoordinateGenerator
-
 from app.application.models.generate_random_coordinates import (
     GenerateRandomCoordinatesInput,
     GenerateRandomCoordinatesOutput,
 )
+from app.domain.models.coordinate import BoundingBox
+from app.domain.services.coordinate_generator_service import CoordinateGenerator
 
 
 class GenerateRandomCoordinatesUseCase:

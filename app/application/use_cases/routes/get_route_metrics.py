@@ -1,7 +1,9 @@
+from app.application.models.get_route_metrics import (
+    GetRouteMetricsInput,
+    GetRouteMetricsOutput,
+)
 from app.domain.models.route import RouteMetrics
 from app.domain.services.osrm_service import OsrmService
-
-from app.application.models.get_route_metrics import GetRouteMetricsInput, GetRouteMetricsOutput
 
 
 class GetRouteMetricsUseCase:

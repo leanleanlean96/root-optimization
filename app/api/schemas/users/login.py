@@ -4,6 +4,7 @@ from app.core.auth.models import JwtTokenPair
 from app.core.exceptions import UnauthorizedException
 from app.data.repositories.user_repository import UserRepository
 
+
 class LoginUseCase:
     def __init__(self, auth_service: JwtAuthService, encryption_service: EncryptionService, user_repository: UserRepository):
         self.auth_service: JwtAuthService = auth_service

@@ -1,10 +1,10 @@
 import json
+
+from geoalchemy2.shape import from_shape, to_shape
 from shapely import to_geojson
 from shapely.geometry import shape
-from geoalchemy2.shape import from_shape, to_shape
-
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.models.route import RouteData, RouteMetrics
 

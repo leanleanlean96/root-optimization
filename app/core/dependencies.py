@@ -1,24 +1,27 @@
-from fastapi import Depends, Request
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator
 
+from fastapi import Depends, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.application.use_cases.auth.login import LoginUseCase
+from app.application.use_cases.auth.refresh import RefreshTokenUseCase
 from app.application.use_cases.routes.create_route import CreateRouteUseCase
-from app.application.use_cases.users.create_user import CreateUserUseCase
 from app.application.use_cases.routes.delete_route import DeleteRouteUseCase
-from app.application.use_cases.users.delete_user import DeleteUserUseCase
 from app.application.use_cases.routes.generate_random_coordinates import (
     GenerateRandomCoordinatesUseCase,
 )
 from app.application.use_cases.routes.get_route import GetRouteByIdUseCase
 from app.application.use_cases.routes.get_route_metrics import GetRouteMetricsUseCase
-from app.application.use_cases.users.get_user import GetUserUseCase
 from app.application.use_cases.routes.optimize_route import OptimizeRouteUseCase
+from app.application.use_cases.users.create_user import CreateUserUseCase
+from app.application.use_cases.users.delete_user import DeleteUserUseCase
+from app.application.use_cases.users.get_user import GetUserUseCase
 from app.application.use_cases.users.update_user import UpdateUserUseCase
-from app.application.use_cases.users.update_user_password import UpdateUserPasswordUseCase
-from app.application.use_cases.auth.refresh import RefreshTokenUseCase
+from app.application.use_cases.users.update_user_password import (
+    UpdateUserPasswordUseCase,
+)
 from app.core.auth.auth_service import JwtAuthService
 from app.core.auth.encryption_service import EncryptionService
 from app.core.auth.models import UserClaims

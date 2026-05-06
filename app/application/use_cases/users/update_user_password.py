@@ -1,6 +1,8 @@
-from app.domain.repositories.user_repo import UserRepository
+from app.application.exceptions import UserNotFoundException
 from app.core.auth.encryption_service import EncryptionService
-from app.application.exceptions import UserNotFoundException, UnauthorizedException
+from app.core.exceptions import UnauthorizedException
+from app.domain.repositories.user_repo import UserRepository
+
 
 class UpdateUserPasswordUseCase:
     def __init__(self, user_repository: UserRepository, encryption_service: EncryptionService):
