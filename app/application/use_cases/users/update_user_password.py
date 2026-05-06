@@ -1,6 +1,5 @@
-from app.application.exceptions import UserNotFoundException
+from app.application.exceptions import UserNotFoundException, UnauthorizedException
 from app.core.auth.encryption_service import EncryptionService
-from app.core.exceptions import UnauthorizedException
 from app.domain.repositories.user_repo import UserRepository
 
 

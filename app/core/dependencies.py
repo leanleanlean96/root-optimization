@@ -30,8 +30,8 @@ from app.core.exceptions import (
     InvalidTokenException,
     InvalidTokenTypeException,
     TokenExpiredException,
-    UnauthorizedException,
 )
+from app.application.exceptions import UnauthorizedException
 from app.data.repositories.routes_repository import RouteRepository
 from app.data.repositories.user_repository import UserRepository
 from app.domain.models.coordinate import BoundingBox

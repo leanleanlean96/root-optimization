@@ -15,7 +15,8 @@ from app.application.exceptions import (
     UserNotFoundException,
 )
 from app.core.config import config
-from app.core.exceptions import JWTException, UnauthorizedException
+from app.core.exceptions import JWTException
+from app.application.exceptions import UnauthorizedException
 from app.data.dbclient import DbClient
 from app.infrastructure.exceptions import (
     OsrmServiceException,
