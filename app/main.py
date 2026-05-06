@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from httpx import AsyncClient
 import uvicorn
-from fastapi import FastAPI
 from app.api.routes.routes import router as routes_router
 from app.api.routes.users import router as users_router
 from app.api.routes.auth import router as auth_router
@@ -50,26 +49,26 @@ main_app.add_middleware(
 )
 
 @main_app.exception_handler(RouteNotFoundException)
-async def unicorn_exception_handler(request: Request, exc: RouteNotFoundException):
+async def unicorn_route_not_found_handler(request: Request, exc: RouteNotFoundException):
     return JSONResponse(
         status_code=404,
-        content={"message": f"Route Not Found"},
+        content={"message": "Route Not Found"},
     )
 @main_app.exception_handler(OsrmServiceUnavailableException)
-async def unicorn_exception_handler(
+async def unicorn_osrm_service_unavailable_handler(
     request: Request, exc: OsrmServiceUnavailableException
 ):
     return JSONResponse(
         status_code=503,
-        content={"message": f"Route Service Unavailable"},
+        content={"message": "Route Service Unavailable"},
     )
 @main_app.exception_handler(OsrmServiceException)
-async def unicorn_exception_handler(request: Request, exc: OsrmServiceException):
+async def unicorn_osrm_service_exception_handler(request: Request, exc: OsrmServiceException):
     return JSONResponse(
         status_code=500,
-        content={"message": f"Something Unusual Happened"},
+        content={"message": "Something Unusual Happened"},
     )
-@main_app.exception_handler(UnauthorizedException)
+@main_app.unauthorized_handler(UnauthorizedException)
 async def unauthorized_handler(request: Request, exc: UnauthorizedException):
     return JSONResponse(status_code=401, content={"message": "Unauthorized"})
 

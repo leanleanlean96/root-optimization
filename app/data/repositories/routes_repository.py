@@ -58,7 +58,7 @@ class RouteRepository:
 
     async def get_routes_by_user_id(self, user_id: int) -> list[RouteData]:
         query_result = await self.session.execute(
-            select(Route).where(Route.user_id == user_id, Route.is_deleted == False)
+            select(Route).where(Route.user_id == user_id, not Route.is_deleted)
         )
 
         user_routes = query_result.scalars().all()

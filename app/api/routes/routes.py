@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Response
+from fastapi import APIRouter, Depends, Path
 
 from app.api.schemas.routes.coordinate import CoordinateDTO
 from app.api.schemas.routes.create_route import CreateRouteRequest, CreateRouteResponse

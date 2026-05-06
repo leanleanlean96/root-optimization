@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Response
+from fastapi import APIRouter, Depends, Response
 
 from app.api.schemas.users.create_user import CreateUserInput
 from app.api.schemas.users.update_user import UpdateUserInput

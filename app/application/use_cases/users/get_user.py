@@ -7,5 +7,5 @@ class GetUserUseCase:
     async def execute(self, user_id: int):
         user = await self.user_repository.get_user_by_id(user_id)
         if not user:
-            raise UserNotFoundException(f"User not found")
+            raise UserNotFoundException("User not found")
         return user

@@ -35,7 +35,7 @@ class UserRepository():
             self, user_id: int
     ) -> Optional[User]:
         query_result = await self.session.execute(
-            select(UserData).where(UserData.id == user_id, UserData.is_active == True)
+            select(UserData).where(UserData.id == user_id, UserData.is_active)
         )
 
         db_user = query_result.scalar_one_or_none()
@@ -53,7 +53,7 @@ class UserRepository():
             self, email: str
     ) -> Optional[User]:
         query_result = await self.session.execute(
-            select(UserData).where(UserData.email == email, UserData.is_active == True)
+            select(UserData).where(UserData.email == email, UserData.is_active)
         )
 
         db_user = query_result.scalar_one_or_none()
@@ -71,7 +71,7 @@ class UserRepository():
             self, user_id: int
     ) -> None:
         query_result = await self.session.execute(
-            select(UserData).where(UserData.id == user_id, UserData.is_active == True)
+            select(UserData).where(UserData.id == user_id, UserData.is_active)
         )
 
         db_user = query_result.scalar_one_or_none()
@@ -86,7 +86,7 @@ class UserRepository():
             self, user_id: int, name: Optional[str], email: Optional[str]
     ) -> User:
         query_result = await self.session.execute(
-            select(UserData).where(UserData.id == user_id, UserData.is_active == True)
+            select(UserData).where(UserData.id == user_id, UserData.is_active)
         )
 
         db_user = query_result.scalar_one_or_none()
@@ -114,7 +114,7 @@ class UserRepository():
             self, user_id: int, new_password: str
     ) -> None:
         query_result = await self.session.execute(
-            select(UserData).where(UserData.id == user_id, UserData.is_active == True)
+            select(UserData).where(UserData.id == user_id, UserData.is_active)
         )
 
         db_user = query_result.scalar_one_or_none()
@@ -129,7 +129,7 @@ class UserRepository():
             self, email: str
     ) -> Optional[User]:
         query_result = await self.session.execute(
-            select(UserData).where(UserData.email == email, UserData.is_active == True)
+            select(UserData).where(UserData.email == email, UserData.is_active)
         )
 
         db_user = query_result.scalar_one_or_none()

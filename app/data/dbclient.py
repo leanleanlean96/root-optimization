@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import (
 )
 from typing import AsyncGenerator
 
-from app.core.config import config
 
 
 class DbClient:
