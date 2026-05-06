@@ -1,31 +1,31 @@
 from fastapi import APIRouter, Depends, Path, Response
 
-from app.api.schemas.coordinate import CoordinateDTO
-from app.api.schemas.create_route import CreateRouteRequest, CreateRouteResponse
-from app.api.schemas.generate_random_coordinates import (
+from app.api.schemas.routes.coordinate import CoordinateDTO
+from app.api.schemas.routes.create_route import CreateRouteRequest, CreateRouteResponse
+from app.api.schemas.routes.generate_random_coordinates import (
     GenerateRandomCoordinatesRequest,
     GenerateRandomCoordinatesResponse,
 )
-from app.api.schemas.get_route import GetRouteResponse
-from app.api.schemas.get_route_metrics import (
+from app.api.schemas.routes.get_route import GetRouteResponse
+from app.api.schemas.routes.get_route_metrics import (
     GetRouteMetricsRequest,
     GetRouteMetricsResponse,
 )
-from app.application.use_cases.create_route import CreateRouteUseCase
-from app.application.use_cases.generate_random_coordinates import (
+from app.application.use_cases.routes.create_route import CreateRouteUseCase
+from app.application.use_cases.routes.generate_random_coordinates import (
     GenerateRandomCoordinatesUseCase,
 )
-from app.application.use_cases.get_route import GetRouteByIdUseCase
-from app.application.use_cases.get_route_metrics import GetRouteMetricsUseCase
-from app.application.use_cases.models.create_route import (
+from app.application.use_cases.routes.get_route import GetRouteByIdUseCase
+from app.application.use_cases.routes.get_route_metrics import GetRouteMetricsUseCase
+from app.application.models.create_route import (
     CreateRouteInput,
     CreateRouteOutput,
 )
-from app.application.use_cases.models.generate_random_coordinates import (
+from app.application.models.generate_random_coordinates import (
     GenerateRandomCoordinatesInput,
 )
-from app.application.use_cases.models.get_route import GetRouteInput, GetRouteOutput
-from app.application.use_cases.models.get_route_metrics import (
+from app.application.models.get_route import GetRouteInput, GetRouteOutput
+from app.application.models.get_route_metrics import (
     GetRouteMetricsInput,
     GetRouteMetricsOutput,
 )

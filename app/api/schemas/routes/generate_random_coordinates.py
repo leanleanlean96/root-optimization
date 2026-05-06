@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.api.schemas.coordinate import CoordinateDTO
+from app.api.schemas.routes.coordinate import CoordinateDTO
 
 
 class GenerateRandomCoordinatesRequest(BaseModel):
