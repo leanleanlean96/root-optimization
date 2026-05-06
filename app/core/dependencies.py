@@ -12,6 +12,7 @@ from app.application.use_cases.routes.delete_route import DeleteRouteUseCase
 from app.application.use_cases.routes.generate_random_coordinates import (
     GenerateRandomCoordinatesUseCase,
 )
+from app.application.use_cases.routes.get_route import GetAllUserRoutesUseCase
 from app.application.use_cases.routes.get_route import GetRouteByIdUseCase
 from app.application.use_cases.routes.get_route_metrics import GetRouteMetricsUseCase
 from app.application.use_cases.routes.optimize_route import OptimizeRouteUseCase
@@ -159,6 +160,10 @@ def get_route_by_id_usecase(
 ) -> GetRouteByIdUseCase:
     return GetRouteByIdUseCase(route_repo=route_repo)
 
+def get_get_all_routes_by_user_id_usecase(
+    route_repo: RouteRepository = Depends(get_route_repo),
+) -> GetAllUserRoutesUseCase:
+    return GetAllUserRoutesUseCase(route_repository=route_repo)
 
 def get_route_metrics_usecase(
     osrm_client: OsrmClient = Depends(get_osrm_client),

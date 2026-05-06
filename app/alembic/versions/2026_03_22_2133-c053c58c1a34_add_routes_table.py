@@ -27,6 +27,7 @@ def upgrade() -> None:
     sa.Column('duration_s', sa.Float(), nullable=False),
     sa.Column('geometry', Geometry(geometry_type="LINESTRING", srid=4326), nullable=False),
     sa.Column('is_active', sa.Boolean(), default=True, nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False, server_default=sa.false()),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk__routes__user_id__users'), ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk__routes'))

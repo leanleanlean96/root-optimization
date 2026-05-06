@@ -24,5 +24,22 @@ class GetRouteByIdUseCase:
 
         return output
 
+class GetAllUserRoutesUseCase:
+    def __init__(self, route_repository: RouteRepository):
+        self.route_repo = route_repository
 
-# TODO: get all routes for user
+    async def execute(self, user_id: int, offset: int, limit: int) -> tuple[list[GetRouteOutput], int]:
+        routes, total = await self.route_repo.get_routes_by_user_id(user_id, offset=offset, limit=limit)
+
+        output: list[GetRouteOutput] = [
+            GetRouteOutput(
+                route_id=route.id,
+                user_id=route.user_id,
+                distance=route.metrics.distance,
+                duration=route.metrics.duration,
+                geometry=route.metrics.geometry,
+            )
+            for route in routes
+        ]
+
+        return output, total
